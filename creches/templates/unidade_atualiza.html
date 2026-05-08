@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block page_title %} Alterar dados da Unidade {% endblock page_title %}
+
+{% block content %}
+
+<nav class="sticky-top bg-light border-bottom shadow-sm p-2">
+    <div class="container d-flex justify-content-end">
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm me-2">
+                <i class="bi-house"></i>Voltar</a>
+    </div>
+</nav>
+
+<div>
+    <form method="post" class="card p-4 shadow-sm">
+        {% csrf_token %}
+
+        <nav class="sticky-top bg-white border-bottom shadow-sm p-3 mb-4">
+            <div class="container d-flex justify-content-between align-items-center">
+                {% if unidade.pk %}
+                    <h4 class="m-0">Editar Cadastro</h4>
+                {% endif %}
+                                <div class="d-flex">
+                    <button type="submit" class="btn btn-success btn-sm me-2">
+                        <i class="bi bi-check-lg"></i> Salvar Cadastro</button>
+                    <button type="button" onclick="buscarCoordenadas()" class="btn btn-secondary btn-sm btn-sm me-2">Validar Localização</button>
+                    <a href="{% url 'unidade_list' %}" class="btn btn-danger btn-sm">Cancelar</a>
+                </div>
+            </div>
+        </nav>
+        
+        <h4 class="text-primary">Dados da Unnidade</h4>
+          {% crispy form_unidade form_unidade.helper %}
+          
+        <h4 class="text-primary">Endereço</h4>
+          {% crispy form_endereco form_endereco.helper %}
+
+    </form>
+
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script src="https://unpkg.com/imask"></script>
+
+
+<script>
+    // Aplicando máscara ao CEP
+    const cepField = document.getElementById('id_cep');
+    if (cepField) {
+        IMask(cepField, { mask: '00000-000' })
+    }
+
+    // Lógica do ViaCEP
+    document.getElementById('id_cep').addEventListener('blur', function() {
+    const cep = this.value.replace(/\D/g, '');
+    
+    if (cep.length === 8) {
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(response => response.json())
+            .then(data => {
+                if (!data.erro) {
+                    document.getElementById('id_logradouro').value = data.logradouro;
+                    document.getElementById('id_bairro').value = data.bairro;
+                    document.getElementById('id_cidade').value = data.localidade;
+                    document.getElementById('id_estado').value = data.uf;
+                    
+                    // Foca no campo número para o usuário continuar
+                    document.getElementById('id_numero').focus();
+                } else {
+                    alert("CEP não encontrado.");
+                }
+            })
+            .catch(error => console.error('Erro ao buscar CEP:', error));
+    }
+    });
+
+</script>
+
+{% endblock scripts %}

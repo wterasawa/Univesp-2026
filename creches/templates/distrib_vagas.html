@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+  Distribuição de Vagas em Creches
+{% endblock page_title %}
+
+{% block content %}
+
+<nav class="sticky-top bg-light border-bottom shadow-sm p-2">
+    <div class="container d-flex justify-content-end">
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm me-2">
+                <i class="bi-house"></i>Voltar</a>
+    </div>
+</nav>
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Ordem</th>
+            <th>Creche</th>
+            <th>Distância</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for sugestao in crianca.sugestoes.all %}
+        <tr>
+            <td>{{ forloop.counter }}º</td>
+            <td>{{ sugestao.unidade.nome }}</td>
+            <td>{{ sugestao.distancia|stringformat:".2f" }} km</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock content %}

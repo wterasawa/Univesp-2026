@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+  Excluir Criança
+{% endblock page_title %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+            <h3 class="mb-0">Confirmar Exclusão da Criança</h3>
+        </div>
+        <div class="card-body">
+            <p class="lead">Você tem certeza que deseja excluir permanentemente o registro abaixo?</p>
+            
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <h5>Dados da Criança</h5>
+                    <p><strong>Nome:</strong> {{ crianca.nome }}</p>
+                    <p><strong>Data de Nasc.:</strong> {{ crianca.data_nascimento }}</p>
+                </div>
+
+                <div class="col-md-4">
+                    <h5>Endereço</h5>
+                    {% if crianca.endereco %}
+                        <p>{{ crianca.endereco.logradouro }}, {{ crianca.endereco.numero }}</p>
+                        <p>{{ crianca.endereco.bairro }} - {{ crianca.endereco.cidade }}</p>
+                    {% else %}
+                        <p class="text-muted">Nenhum endereço cadastrado.</p>
+                    {% endif %}
+                </div>
+
+                <div class="col-md-4">
+                    <h5>Familiares</h5>
+                    <ul class="list-unstyled">
+                        {% for familia in crianca.familia.all %}
+                            <li><strong>{{ familiar.mae }}:</strong> {{ familiar.pai }}</li>
+                        {% empty %}
+                            <li class="text-muted">Nenhum familiar listado.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <hr>
+
+            <form method="post" class="d-flex justify-content-end gap-2">
+                {% csrf_token %}
+                <a href="{% url 'listagem' %}" class="btn btn-secondary btn-sm">Cancelar</a>
+                <button type="submit" class="btn btn-danger btn-sm">Confirmar Exclusão Definitiva</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+

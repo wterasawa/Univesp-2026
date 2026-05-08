@@ -1,0 +1,30 @@
+
+{% extends 'base.html' %}
+
+{% block page_title %}
+  Cadastrar Endereço
+{% endblock page_title %}
+
+{% block content %}
+
+<nav class="sticky-top bg-light border-bottom shadow-sm p-2">
+    <div class="container d-flex justify-content-end">
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm me-2">
+                <i class="bi-house"></i>Voltar</a>
+    </div>
+</nav>
+
+  <div class="d-grid gap-4 mt-4">
+
+    <body>
+        <h1>🎉 Cadastro concluído com sucesso!</h1>
+        <p>Os dados da criança, da família e o endereço foram salvos no sistema.</p>
+    
+        <a href="#">Cadastrar outra criança</a>
+        <br>
+        <a href="/">Voltar para o início</a>
+    </body>
+
+  </div>
+
+{% endblock content %}

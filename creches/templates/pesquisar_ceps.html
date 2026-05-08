@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<nav class="sticky-top bg-light border-bottom shadow-sm p-2">
+    <div class="container d-flex justify-content-end">
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm me-2">
+                <i class="bi-house"></i>Voltar</a>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h2>🚀 Sugestões de CEP Encontradas</h2>
+    <p>Os seguintes endereços estavam sem CEP. A API sugeriu os valores abaixo:</p>
+
+    <div class="row">
+        {% for item in sugestoes %}
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.logradouro }}</h5>
+                    <p class="card-text text-muted">{{ item.cidade }}</p>
+                    <div class="alert alert-info py-2">
+                        <strong>CEP Sugerido:</strong> {{ item.cep_sugerido }}
+                    </div>
+                    <form method="post" action="{% url 'confirmar_cep' item.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="cep_sugerido" value="{{ item.cep_sugerido }}">
+                        <button type="submit" class="btn btn-success w-100">
+                            Confirmar e Salvar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="alert alert-success w-100">
+            ✅ Nenhum endereço sem CEP precisando de atualização no momento!
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

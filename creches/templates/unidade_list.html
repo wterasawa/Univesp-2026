@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+  Lista de Unidades de Ensino
+{% endblock page_title %}
+
+{% block content %}
+
+<nav class="sticky-top bg-light border-bottom shadow-sm p-2">
+    <div class="container d-flex justify-content-end">
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm me-2">
+                <i class="bi-house"></i>Voltar</a>
+    </div>
+</nav>
+
+  <div class="container mt-2">
+    <h1 class="text-primary mb-2">Lista de Unidades de Ensino</h1>
+    
+      <div class="table-responsive">
+        <table class="table table-hover border">
+            <thead class="table-light">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nome da Unidade</th>
+                <th scope="col">Ações</th>
+              </tr>
+            </thead>
+      
+            <tbody>
+              {% for unidade in object_list %}
+                <tr>
+                  <th scope="row">{{ unidade.pk }}</th>
+                  <td>{{ unidade.nome_unidade }}</td>
+
+                <td>
+                  <a href="{% url 'unidade_atualiza' unidade.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                  <a href="{% url 'unidade_delete' unidade.pk %}" class="btn btn-danger btn-sm">Excluir</a>
+                </td>
+                
+                </tr>
+              {% endfor %}
+
+            </tbody>
+        </table>
+      </div>
+  </div>
+{% endblock content %}

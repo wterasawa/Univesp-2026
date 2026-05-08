@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+  Excluir Unidade
+{% endblock page_title %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+            <h3 class="mb-0">Confirmar Exclusão da Unidade de Ensino</h3>
+        </div>
+        <div class="card-body">
+            <p class="lead">Você tem certeza que deseja excluir permanentemente o registro abaixo?</p>
+            
+            <div class="row mt-6">
+                <div class="col-md-6">
+                    <h5>Dados da Unidade de Ensino</h5>
+                    <p><strong>Nome:</strong> {{ unidade.nome_unidade }}</p>
+                </div>
+
+                <div class="col-md-6">
+                    <h5>Endereço</h5>
+                    {% if unidade.endereco %}
+                        <p>{{ unidade.endereco.logradouro }}, {{ unidade.endereco.numero }}</p>
+                        <p>{{ unidade.endereco.bairro }} - {{ unidade.endereco.cidade }}</p>
+                    {% else %}
+                        <p class="text-muted">Nenhum endereço cadastrado.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <hr>
+
+            <form method="post" class="d-flex justify-content-end gap-2">
+                {% csrf_token %}
+                <a href="{% url 'unidade_list' %}" class="btn btn-secondary btn-sm">Cancelar</a>
+                <button type="submit" class="btn btn-danger btn-sm">Confirmar Exclusão Definitiva</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+

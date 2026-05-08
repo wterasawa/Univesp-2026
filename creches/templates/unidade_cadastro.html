@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block page_title %} Cadastrar Unidade {% endblock page_title %}
+
+{% block content %}
+
+<nav class="sticky-top bg-light border-bottom shadow-sm p-2">
+    <div class="container d-flex justify-content-end">
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm me-2">
+                <i class="bi-house"></i>Voltar</a>
+    </div>
+</nav>
+
+<div>
+    {% if unidade.pk %}
+        <h4>Editar Unidade</h4>
+    {% endif %}
+    
+    <form method="post" class="card p-4 shadow-sm">
+        {% csrf_token %}
+
+        <nav class="sticky-top bg-white border-bottom shadow-sm p-3 mb-4">
+            <div class="container d-flex justify-content-between align-items-center">
+                <h4 class="m-0">Editar Cadastro</h4>
+                
+                <div class="d-flex">
+                    <button type="submit" class="btn btn-success btn-sm me-2">
+                        <i class="bi bi-check-lg"></i> Salvar Cadastro</button>
+                    <button type="button" onclick="buscarCoordenadas()" class="btn btn-secondary btn-sm btn-sm me-2">Validar Localização</button>
+                    <a href="{% url 'listagem' %}" class="btn btn-danger btn-sm">Cancelar</a>
+                </div>
+            </div>
+        </nav>
+
+        <h4 class="text-primary">Dados da Unnidade</h4>
+          {% crispy form_unidade form_unidade.helper %}
+          <hr>
+        <h4 class="text-primary">Endereço</h4>
+          {% crispy form_endereco form_endereco.helper %}
+    
+    </form>
+
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+<script src="https://unpkg.com/imask"></script>
+
+<script>
+    async function buscarCoordenadas() {
+        const logradouro = document.getElementById('id_logradouro').value;
+        const numero = document.getElementById('id_numero').value;
+        const bairro = document.getElementById('id_bairro').value;
+        const cep = document.getElementById('id_cep').value;
+        const cidade = document.getElementById('id_cidade').value;
+        const estado = document.getElementById('id_estado').value;
+
+        const enderecoCompleto = `${logradouro}, ${numero}, ${bairro}, ${cep}, ${cidade} ${estado}`;
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(enderecoCompleto)}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            console.log("Resposta do Nominatim:", data); // Verifique o console do navegador (F12)
+
+            if (data.length > 0) {
+                document.getElementById('id_latitude').value = data[0].lat;
+                document.getElementById('id_longitude').value = data[0].lon;
+                alert("Localização confirmada!");
+            } else {
+                alert("Endereço não encontrado. Verifique os dados.");
+            }
+            
+            if (data.length > 0) {
+                // Preenche os campos ocultos de lat/long que serão enviados ao Django
+                document.getElementById('id_latitude').value = data[0].lat;
+                document.getElementById('id_longitude').value = data[0].lon;
+                alert("Coordenadas capturadas com sucesso!");
+            }
+        } catch (error) {
+            console.error("Erro ao buscar coordenadas:", error);
+        }
+    }
+</script>
+
+
+<script>
+    // Aplicando máscara ao CEP
+    const cepField = document.getElementById('id_cep');
+    if (cepField) {
+        IMask(cepField, { mask: '00000-000' });
+    }
+
+    // Lógica do ViaCEP
+    document.getElementById('id_cep').addEventListener('blur', function() {
+    const cep = this.value.replace(/\D/g, '');
+    
+    if (cep.length === 8) {
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(response => response.json())
+            .then(data => {
+                if (!data.erro) {
+                    document.getElementById('id_logradouro').value = data.logradouro;
+                    document.getElementById('id_bairro').value = data.bairro;
+                    document.getElementById('id_cidade').value = data.localidade;
+                    document.getElementById('id_estado').value = data.uf;
+                    
+                    // Foca no campo número para o usuário continuar
+                    document.getElementById('id_numero').focus();
+                } else {
+                    alert("CEP não encontrado.");
+                }
+            })
+            .catch(error => console.error('Erro ao buscar CEP:', error));
+    }
+    });
+
+</script>
+{% endblock scripts %}

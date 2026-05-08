@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<nav class="sticky-top bg-light border-bottom shadow-sm p-2">
+    <div class="container d-flex justify-content-end">
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm me-2">
+                <i class="bi-house"></i>Voltar</a>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h2>Relatório de Dados Incompletos</h2>
+    <p class="text-muted">Os itens abaixo possuem coordenadas inválidas e serão ignorados no cálculo de distância.</p>
+
+    {% if total_erros > 0 %}
+        <div class="alert alert-danger">
+            Existe(m) <strong>{{ total_erros }}</strong> registro(s) com problema(s)
+        </div>
+
+        <h4 class="mt-4">Crianças sem Coordenadas</h4>
+        <ul class="list-group mb-4">
+            {% for c in criancas_erro %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{c.id}} {{ c.nome }} (Endereço: {{ c.endereco.logradouro }}, {{ c.endereco.numero }}, {{ c.endereco.bairro }})
+                    <a href="{% url 'atualiza' c.pk %}" class="btn btn-sm btn-warning">Corrigir</a>
+                </li>
+            {% empty %}
+                <li class="list-group-item text-success">Nenhuma criança com erro.</li>
+            {% endfor %}
+        </ul>
+
+        <h4>Creches sem Coordenadas</h4>
+        <ul class="list-group">
+            {% for u in unidades_erro %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{u.id}} {{ u.nome_unidade }}
+                    <a href="{% url 'unidade_atualiza' u.id %}" class="btn btn-sm btn-warning">Corrigir</a>
+                </li>
+            {% empty %}
+                <li class="list-group-item text-success">Nenhuma creche com erro.</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="alert alert-success">
+            ✅ Todos os registros possuem coordenadas preenchidas!
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

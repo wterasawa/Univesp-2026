@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<nav class="sticky-top bg-light border-bottom shadow-sm p-2">
+    <div class="container d-flex justify-content-end">
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm me-2">
+                <i class="bi-house"></i>Voltar</a>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h4>Processamento de Proximidade</h4>
+    
+    <div class="card p-2 mb-2 shadow-sm">
+        <p>Clique no botão abaixo para recalcular as 3 creches mais próximas para cada criança baseando-se na latitude e longitude.</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary btn-sm">
+                🚀 Iniciar Processamento Manual
+            </button>
+        </form>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="alert alert-info">
+        <strong>📅 Última atualização do sistema:</strong> 
+            {% if ultima_distribuicao %}
+                {{ ultima_distribuicao.data_revisao|date:"d/m/Y H:i" }}
+            {% else %}
+                Nunca processado.
+            {% endif %}
+    </div>
+
+    <h4>Amostra dos Resultados (Top 3)</h4>
+    <table class="table table-striped mt-2">
+        <thead class="table-dark">
+            <tr>
+                <th>Criança</th>
+                <th>Creche</th>
+                <th>Distância (KM)</th>
+                <th>Ranking</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rank in rankings %}
+            <tr>
+                <td>{{ rank.crianca.nome }}</td>
+                <td>{{ rank.unidade.nome_unidade }}</td>
+                <td>{{ rank.distancia_km }} km</td>
+                <td><span class="badge bg-info text-dark">{{ rank.posicao }}º</span></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">Nenhum dado processado ainda.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock script %}

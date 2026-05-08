@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+  Home - Creches
+{% endblock page_title %}
+
+{% block content %}
+
+<div class="d-grid gap-3 mt-3 col-md-8 mx-auto">
+  
+    <a href="{% url 'cadastro' %}" class="btn btn-primary btn-lg">Cadastro de Crianças</a>
+    <a href="{% url 'listagem' %}" class="btn btn-success btn-lg">Lista / Altera / Exclui crianças cadastradas</a>
+    <hr>
+
+    <a href="{% url 'unidade_cadastro' %}" class="btn btn-warning btn-lg">Cadastro de Nova Unidade de Ensino</a>
+    <a href="{% url 'unidade_list' %}" class="btn btn-info btn-lg">Listagem das Unidades de Ensino</a>
+    <hr>
+    
+    <a href="{% url 'criancas_por_creche' %}" class="btn btn-dark btn-lg">Distribuição de Vagas</a>
+    <hr>
+    
+    <h4>Utilitários</h4>
+    <a href="pesquisar_ceps" class="btn btn-secondary btn-lg">Endereços que não apresentam CEP</a>
+    <a href="coord_vazias" class="btn btn-success btn-lg">Endereços que não apresentam coordenadas</a>
+    <a href="{% url 'criancas_vagas' %}" class="btn btn-light btn-lg">Determinação de distância de creches</a>
+    
+</div>
+
+{% endblock content %}

@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    /* Estilos para a tela normal */
+    .table-compacta td, .table-compacta th {
+        padding: 0.25rem 0.5rem !important;
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+
+    @media print {
+        /* 1. ESCONDE TUDO O QUE NÃO DEVE APARECER */
+        /* Incluímos aqui a classe .no-print e elementos comuns de cabeçalho */
+        nav, .navbar, header, .no-print, .btn, .card, #filtro-form, footer {
+            display: none !important;
+        }
+
+        /* 2. REMOVE A TARJA PRETA E AJUSTA O CABEÇALHO DA TABELA */
+        .table-dark, 
+        .table-dark th, 
+        thead.table-dark, 
+        .table thead th {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            border-bottom: 2px solid #000000 !important;
+            text-transform: uppercase;
+        }
+
+        /* 3. REMOVE MARGENS DO TOPO DA PÁGINA */
+        body {
+            background-color: white !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .container {
+            width: 100% !important;
+            max-width: none !important;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+        }
+
+        /* 4. AJUSTE DAS LINHAS DA TABELA */
+        .table-compacta td {
+            padding: 0.1rem 0.3rem !important;
+            font-size: 0.8rem !important;
+            border: 1px solid #eee !important;
+        }
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="print-header">
+        <h3>Sistema de Vagas - Relatório de Proximidade</h3>
+        <p>Unidade: {{ unidade_selecionada.nome_unidade }} | Data: {% now "d/m/Y H:i" %}</p>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+        <h3>📍 Crianças próximas por Creche</h3>
+        <div>
+            {% if ranking %}
+                <button onclick="window.print();" class="btn btn-success me-2">
+                    <i class="bi bi-printer"></i> Imprimir
+                </button>
+            {% endif %}
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary">Voltar</a>
+        </div>
+    </div>
+
+    <form method="GET" class="row g-3 align-items-end no-print">
+        <div class="col-md-5">
+            <label class="form-label fw-bold">Creche:</label>
+            <select name="unidade" class="form-select form-select-sm">
+                <option value="">---------</option>
+                {% for u in unidades %}
+                    <option value="{{ u.id }}" {% if unidade_selecionada.id == u.id %}selected{% endif %}>
+                        {{ u.nome_unidade }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Etapa:</label>
+            <select name="etapa" class="form-select form-select-sm">
+                <option value="">Todas</option>
+                <option value="B1" {% if etapa_atual == "B1" %}selected{% endif %}>Berçário 1</option>
+                <option value="B2" {% if etapa_atual == "B2" %}selected{% endif %}>Berçário 2</option>
+                <option value="M1" {% if etapa_atual == "M1" %}selected{% endif %}>Maternal 1</option>
+                <option value="M2" {% if etapa_atual == "M2" %}selected{% endif %}>Maternal 2</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary btn-sm w-100">Pesquisar</button>
+        </div>
+    </form>
+
+        <div class="table-responsive">
+            <table class="table table-sm table-hover table-compacta align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Criança</th>
+                        <th>Etapa</th>
+                        <th>Distância</th>
+                        <th>Ranking</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        {% for item in ranking %}
+                            <tr>
+                                <td><strong>{{ item.crianca.nome }}</strong></td>
+                                <td>{{ item.crianca.etapa }}</td>
+                                <td><span class="badge bg-success">{{ item.distancia_km }} km</span></td>
+                                <td>{{ item.posicao }}º</td>
+                            </tr>
+                        {% endfor %}
+                    <span class="badge bg-primary lh-1">{{ item.posicao }}º</span>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="alert alert-light border text-center p-5">
+            <i class="bi bi-info-circle fs-2"></i>
+            <p class="mt-2">Selecione uma creche acima para visualizar a lista de crianças que moram mais próximas.</p>
+        </div>
+
+    </div>
+
+{% endblock %}

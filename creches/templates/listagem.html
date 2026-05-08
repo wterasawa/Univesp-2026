@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+  Lista de Crianças
+{% endblock page_title %}
+
+{% block content %}
+
+<nav class="sticky-top bg-light border-bottom shadow-sm p-2">
+    <div class="container d-flex justify-content-end">
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm me-2">
+                <i class="bi-house"></i>Voltar</a>
+    </div>
+</nav>
+
+<div class="card shadow-sm mb-4 no-print">
+    <div class="card-body">
+        <form method="GET" class="row g-3 align-items-end">
+            
+            <div class="col-md-3">
+                <label class="form-label fw-bold">Nome</label>
+                <input type="text" name="nome" class="form-control form-control-sm" value="{{ request.GET.nome }}">
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label fw-bold">Etapa</label>
+                <select name="etapa" class="form-select form-select-sm">
+                    <option value="">Todas</option>
+                    <option value="B1" {% if request.GET.etapa == "B1" %}selected{% endif %}>Berçário 1</option>
+                    <option value="B2" {% if request.GET.etapa == "B2" %}selected{% endif %}>Berçário 2</option>
+                    <option value="M1" {% if request.GET.etapa == "M1" %}selected{% endif %}>Maternal 1</option>
+                    <option value="M2" {% if request.GET.etapa == "M2" %}selected{% endif %}>Maternal 2</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label fw-bold">Nasc. após</label>
+                <input type="date" name="data_inicio" class="form-control form-control-sm" value="{{ request.GET.data_inicio }}">
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label fw-bold">Nasc. antes</label>
+                <input type="date" name="data_fim" class="form-control form-control-sm" value="{{ request.GET.data_fim }}">
+            </div>
+
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary btn-sm w-100">
+                    <i class="bi bi-search"></i> Filtrar
+                </button>
+                <a href="{% url 'listagem_criancas' %}" class="btn btn-outline-secondary btn-sm w-100">Limpar</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <h2 class="text-primary mb-2">Crianças Cadastradas</h2>
+    
+      <div class="table-responsive">
+        <table class="table table-hover border">
+          <thead>
+            <tr>
+                <th scope="col">
+                    <a href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}ordenar=id" 
+                      class="btn btn-sm btn-light fw-bold">
+                        # <i class="bi bi-sort-numeric-down"></i>
+                    </a>
+                </th>
+                <th scope="col">
+                    <a href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}ordenar=nome" 
+                      class="btn btn-sm btn-light fw-bold">
+                        Nome <i class="bi bi-sort-alpha-down"></i>
+                    </a>
+                </th>
+                <th scope="col" class="py-2">Data de Nasc.</th>
+                <th scope="col" class="py-2">Etapa</th>
+                <th scope="col" class="py-2">Ações</th>
+            </tr>
+        </thead>
+        
+          <tbody>
+            {% for crianca in object_list %}
+            <tr>
+              <td>{{ crianca.id }}</td>
+              <td>{{ crianca.nome }}</td>
+              <td>{{ crianca.data_nascimento }}</td>
+              <td>{{ crianca.etapa }}</td>
+              <td>
+                <a href="{% url 'atualiza' crianca.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                  <a href="{% url 'delete' crianca.pk %}" class="btn btn-danger btn-sm">Excluir</a>
+                <a href="{% url 'calcular_vagas_manual' crianca.pk %}" class="btn btn-info btn-sm">
+                  <i class="fas fa-sync"></i> Calcular Creches
+                </a>
+              </td>
+            </tr>
+
+            {% empty %}
+              <tr>
+                <td colspan="4" class="text-center">Nenhuma criança cadastrada.</td>
+              </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+  
+{% endblock content %}
